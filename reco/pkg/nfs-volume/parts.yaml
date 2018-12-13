@@ -1,0 +1,36 @@
+{ 
+   "name": "nfs-volume",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "Prototype for creating a NFS persistent volume claim\n",
+   "author": "Rishabh <rishabhs@cisco.com>",
+   "contributors": [
+      {
+         "name": "Rishabh",
+         "email": "rishabhs@cisco.com"
+      }
+   ],
+   "repository": {
+      "type": "git",
+      "url": "test"
+   },
+   "bugs": {
+      "url": "test"
+   },
+   "keywords": [
+      "kubeflow",
+      "tensorflow",
+      "database"
+   ],
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.nfs-volume",
+      "componentName": "nfs-volume",
+      "flags": {
+         "name": "nfs-volume",
+         "namespace": "default"
+      },
+      "comment": "Create NFS volume"
+   },
+   "license": "Apache 2.0"
+}
+
