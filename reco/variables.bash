@@ -1,10 +1,10 @@
 #!/usr/local/env bash
 
 ## Namespace to be used in k8s cluster for your application
-NAMESPACE=awsreco
+NAMESPACE=kubeflowrishabh
 
 ## Ksonnet app name
-APP_NAME=recoengine
+APP_NAME=mnistrishabh
 
 ## GITHUB version for official kubeflow components
 KUBEFLOW_GITHUB_VERSION=v0.3.0-rc.3
@@ -16,22 +16,25 @@ CISCOAI_GITHUB_VERSION=master
 KF_ENV=nativek8s
 
 ## Name of the NFS Persistent Volume
-NFS_PVC_NAME=nfs
+NFS_PVC_NAME=nfsrishabh
 
 ## Used in training.bash
 # Enviroment variables for mnist training job (See mnist_model.py)
-TF_RESULT_DIR=/reco/data
-TF_MODEL_DIR=/reco/model
-NFS_MODEL_PATH=/reco/export
+TF_MODEL_DIR=/mnt/model
+TF_OUT_DIR=/mnt/result
+NFS_MODEL_PATH=/mnt/export
 TF_EXPORT_DIR=${NFS_MODEL_PATH}
 
 # If you want to use your own image,
 # make sure you have a dockerhub account and change
 # DOCKER_BASE_URL and IMAGE below.
-DOCKER_BASE_URL=gcr.io/cpsg-ai-demo
-IMAGE=${DOCKER_BASE_URL}/tf-mnist-demo:v1
+#DOCKER_BASE_URL=gcr.io/cpsg-ai-demo
+#IMAGE=${DOCKER_BASE_URL}/tf-mnist-demo:v1
 #docker build . --no-cache  -f Dockerfile -t ${IMAGE}
 #docker push ${IMAGE}
+
+DOCKER_BASE_URL=docker.io/rish691
+IMAGE=${DOCKER_BASE_URL}/aws-reco:v11
 
 # Used in portf.bash and webapp.bash
 # If using without an application, source this file before using
@@ -39,7 +42,8 @@ PORT=9000
 export TF_MODEL_SERVER_PORT=${PORT}
 
 # Used in webapp.bash
-DOCKER_HUB=gcr.io
-DOCKER_USERNAME=cpsg-ai-demo
-DOCKER_IMAGE=mnist-client
-WEBAPP_FOLDER=webapp
+#DOCKER_HUB=gcr.io
+#DOCKER_USERNAME=cpsg-ai-demo
+#DOCKER_IMAGE=mnist-client
+#WEBAPP_FOLDER=webapp
+

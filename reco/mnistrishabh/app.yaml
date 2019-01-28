@@ -1,0 +1,42 @@
+apiVersion: 0.3.0
+environments:
+  default:
+    destination:
+      namespace: default
+      server: https://35.200.182.107
+    k8sVersion: v1.9.7
+    path: default
+kind: ksonnet.io/app
+libraries:
+  ciscoai/nfs-server:
+    name: nfs-server
+    registry: ciscoai
+    version: ""
+  ciscoai/nfs-volume:
+    name: nfs-volume
+    registry: ciscoai
+    version: ""
+  ciscoai/tf-mnistrishabhjob:
+    name: tf-mnistrishabhjob
+    registry: ciscoai
+    version: ""
+  kubeflow/core:
+    name: core
+    registry: kubeflow
+    version: c7b3be5138d8c41ec86991da3fe05b6c11d6908b
+  kubeflow/tf-serving:
+    name: tf-serving
+    registry: kubeflow
+    version: c7b3be5138d8c41ec86991da3fe05b6c11d6908b
+name: mnistrishabh
+registries:
+  ciscoai:
+    protocol: fs
+    uri: /Users/rishabh.singh/bootcamp_3_12_2018/cisco-ml-mnist/mnist/pkg
+  incubator:
+    protocol: github
+    uri: github.com/ksonnet/parts/tree/master/incubator
+  kubeflow:
+    protocol: github
+    uri: github.com/kubeflow/kubeflow/tree/v0.3.0-rc.3/kubeflow
+version: 0.0.1

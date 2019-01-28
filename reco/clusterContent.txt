@@ -1,0 +1,4 @@
+{'i3.2xlarge': 44, 'r3.xlarge': 81, 'm4.large': 26, 'm4.xlarge': 2, 'c5d.2xlarge': 2, 'm5.4xlarge': 3, 'm5d.large': 2, 'm4.2xlarge': 2, 'r4.2xlarge': 1, 'm5.large': 2}
+{'r3.xlarge': 48, 'i3.2xlarge': 26, 'm4.xlarge': 3, 'm5d.large': 2, 'm5.large': 6, 'm4.large': 14, 'c5d.2xlarge': 2, 'm5.4xlarge': 3, 'm5.xlarge': 1}
+{'r3.xlarge': 223, 'i3.2xlarge': 119, 'm4.large': 34, 'm5d.large': 9, 'c5d.2xlarge': 4, 'm4.2xlarge': 11, 'r5.2xlarge': 2, 'm5.large': 15, 't2.large': 2, 'm5.4xlarge': 9, 'm4.xlarge': 5, 'r4.2xlarge': 7, 'm5.xlarge': 3, 'r3.large': 1, 'm4.4xlarge': 1, 't2.medium': 1}
+{'i3.2xlarge': 41, 'm5.large': 3, 'r3.xlarge': 76, 'm4.large': 20, 'm4.2xlarge': 3, 'm4.xlarge': 3, 'r3.large': 1, 'c5d.2xlarge': 4, 't2.medium': 2, 'm5d.large': 2, 'm3.medium': 1, 'm5.xlarge': 1, 'r4.2xlarge': 1, 'r4.large': 1, 'm5.4xlarge': 2}

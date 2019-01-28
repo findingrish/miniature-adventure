@@ -5,9 +5,18 @@ import csv
 import pprint
 import os
 
+EXPORT_DIR = os.getenv("TF_EXPORT_DIR", "/Users/rishabh.singh/bootcamp_3_12_2018/aws-recommender/reco")
+TF_MODEL_DIR = os.getenv("TF_MODEL_DIR", "/Users/rishabh.singh/bootcamp_3_12_2018/aws-recommender")
+MACHINE_TAG_PATH = '/opt/awsMachineTag.csv'
+DATA_PATH = '/opt/awsMachineData.csv'
+#MACHINE_TAG_PATH = "./awsMachineTag.csv"
+#DATA_PATH = "./awsMachineData.csv"
 
+print("Starting 1")
+
+X_FEATURE = 'x' 
 def read():
-    points = genfromtxt('/opt/awsMachineData.csv', delimiter=',')
+    points = genfromtxt(DATA_PATH, delimiter=',')
     col_mean = points.mean(axis=0)
     col_sdev =  points.std(axis=0)
     points = (points-col_mean)
@@ -18,37 +27,56 @@ def read():
     points[inds] = np.take(col_mean, inds[1])
     return points
 
-def input_fn():
-    points = read()
-    return tf.train.limit_epochs(tf.convert_to_tensor(points, dtype=tf.float32), num_epochs=1)
+
+def serving_input_receiver_fn():
+    inputs = {X_FEATURE: tf.placeholder(tf.float32, [1, 33])}
+    return tf.estimator.export.ServingInputReceiver(inputs, inputs)
 
 def main(_):
+    points = read()
+    points = np.float32(points)
     
+    print("Starting 2")
     num_clusters = 6
-    sess = tf.InteractiveSession()
-    kmeans = tf.contrib.factorization.KMeansClustering(num_clusters=num_clusters, use_mini_batch=False)
+    sess = tf.Session()
+    kmeans = tf.contrib.factorization.KMeansClustering(num_clusters=num_clusters, model_dir=TF_MODEL_DIR, use_mini_batch=False)
     
-    num_iterations = 2
-    previous_centers = None
-    for _ in range(num_iterations):
-        kmeans.train(input_fn)
-        cluster_centers = kmeans.cluster_centers()
-        previous_centers = cluster_centers
+    print("Starting 3")
     
+    input_fn = tf.estimator.inputs.numpy_input_fn({X_FEATURE: points}, shuffle=True)
+    train_spec = tf.estimator.TrainSpec(
+        input_fn, max_steps=15)
+    
+    export_final = tf.estimator.FinalExporter(
+        EXPORT_DIR, serving_input_receiver_fn=serving_input_receiver_fn)
+    
+    eval_spec = tf.estimator.EvalSpec(input_fn, exporters=export_final,
+                                      steps=1)
+  
+    tf.estimator.train_and_evaluate(kmeans, train_spec, eval_spec)
+    print("Starting 3")
+
     cluster_indices = list(kmeans.predict_cluster_index(input_fn))
     i = 1
     tags = {}
-    with open('/opt/awsMachineTag.csv') as f:
+    with open(MACHINE_TAG_PATH) as f:
         csv_reader = csv.reader(f, delimiter=',')
         for row in csv_reader:
             tags[i] = row[0]
             i = i + 1
     
-    points = read()
     cluster_content = {}
+    cluster_count = {}
+    
     for i, point in enumerate(points):
         cluster_index = cluster_indices[i]
         machineType = tags[i+1]
+        if cluster_index not in cluster_count:
+            cluster_count[cluster_index] = 1
+            cluster_content[cluster_index] = {}
+        else:
+            cluster_count[cluster_index] = cluster_count[cluster_index] + 1
+            
         if machineType in cluster_content[cluster_index]:
             cluster_content[cluster_index][machineType] = cluster_content[cluster_index][machineType] + 1
         else:
@@ -57,33 +85,15 @@ def main(_):
     #write to file
     done = []
     print(cluster_content)
-    with open('/opt/clusterContent.txt',  mode='w') as f:
+    path = str(EXPORT_DIR + '/clusterContent.txt')
+    with open(path,  mode='w') as f:
         for i in cluster_indices:
             cluster_index = cluster_indices[i]
             if cluster_index not in done:
                 f.write("%s\n" % cluster_content[cluster_index])
                 done.append(cluster_index)
     
-    export_path_base = '/opt'
-    export_path = os.path.join(tf.compat.as_bytes(export_path_base), tf.compat.as_bytes(str('1.2')))
-    print(export_path)
-    builder = tf.saved_model.builder.SavedModelBuilder(export_path)
-    
-    tensor_info_x = tf.saved_model.utils.build_tensor_info(tf.convert_to_tensor(points[0], dtype=tf.float32))
-    tensor_info_y = tf.saved_model.utils.build_tensor_info(tf.convert_to_tensor(cluster_indices[0]))
 
-    prediction_signature = (
-      tf.saved_model.signature_def_utils.build_signature_def(
-          inputs={'metrics': tensor_info_x},
-          outputs={'clusterId': tensor_info_y},
-          method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
-    
-    builder.add_meta_graph_and_variables(
-        sess, [tf.saved_model.tag_constants.SERVING],
-        signature_def_map={'predict_cluster': prediction_signature,})
-
-    # export the model
-    builder.save(as_text=True)
     sess.close()
     
 if __name__ == '__main__':
